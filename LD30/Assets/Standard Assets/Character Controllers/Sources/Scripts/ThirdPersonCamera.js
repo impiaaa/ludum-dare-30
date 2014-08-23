@@ -22,6 +22,9 @@ var clampHeadPositionScreenSpace = 0.75;
 
 var lockCameraTimeout = 0.2;
 
+var minAngle = -90;
+var maxAngle = 90;
+
 private var headOffset = Vector3.zero;
 private var centerOffset = Vector3.zero;
 
@@ -118,7 +121,7 @@ function Apply (dummyTarget : Transform, dummyCenter : Vector3)
 		// * It is really confusing to do 180 degree spins when turning around.
 		if (AngleDistance (currentAngle, targetAngle) > 160 && controller.IsMovingBackwards ())
 			targetAngle += 180;
-
+        
 		currentAngle = Mathf.SmoothDampAngle(currentAngle, targetAngle, angleVelocity, angularSmoothLag, angularMaxSpeed);
 	}
 
