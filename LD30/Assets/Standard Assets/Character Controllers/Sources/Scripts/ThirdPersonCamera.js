@@ -22,9 +22,6 @@ var clampHeadPositionScreenSpace = 0.75;
 
 var lockCameraTimeout = 0.2;
 
-var minAngle = -90;
-var maxAngle = 90;
-
 private var headOffset = Vector3.zero;
 private var centerOffset = Vector3.zero;
 
