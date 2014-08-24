@@ -3,6 +3,7 @@
 var speed:float;
 var cameraObject:GameObject;
 var enableEarly:GameObject;
+var illustration:GameObject;
 var bookMaterial:Material;
 
 private var cameraController:MonoBehaviour;
@@ -46,8 +47,7 @@ private function enableChildComponents(enable : boolean) {
 }
 
 private function enableChildObjects(enable : boolean) {
-    for (var child:Transform in transform)
-    {
+    for (var child : Transform in transform) {
         child.gameObject.SetActive(enable);
     } 
 }
@@ -82,6 +82,8 @@ function Update () {
             renderer.material.SetFloat("_Blend", 1-clock);
         }
         
+        illustration.renderer.material.color.a = 1-clock;
+        
         if (clock >= 1.0) {
             runningState = EXPANDED;
             enableChildComponents(true);
@@ -104,6 +106,8 @@ function Update () {
         }
         
         transform.localScale.y = 1-clock;
+        
+        illustration.renderer.material.color.a = clock;
         
         if (clock >= 1.0) {
             enableChildObjects(false);
