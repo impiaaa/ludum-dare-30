@@ -2,17 +2,46 @@
 
 var textBits:String[];
 var bitsShown:int;
+var speed:float;
 
 private var textMesh:TextMesh;
+private var startingTime:float;
+private var bitsToShow:int;
 
 function Start () {
     textMesh = GetComponent.<TextMesh>();
 }
 
-function Update () {
-    var str:String = "";
-    for (var i:int = 0; i < bitsShown; i++) {
-        str += textBits[i];
+function ShowNextBit() {
+    if (bitsShown >= textBits.length) {
+        return;
     }
-    textMesh.text = str;
+    startingTime = Time.time;
+    bitsToShow = bitsShown+1;
+}
+
+function Update () {
+    if (bitsToShow != bitsShown) {
+        var clock = (Time.time-startingTime)*speed;
+        var str:String = "";
+        var i:int;
+        if (clock >= 1) {
+            bitsShown = bitsToShow;
+            for (i = 0; i < bitsShown; i++) {
+                str += textBits[i];
+            }
+        }
+        else {
+            for (i = 0; i < bitsShown; i++) {
+                str += textBits[i];
+            }
+            var colorTag:String = String.Format("<color=#000000{0:x2}>", Mathf.FloorToInt(clock*255));
+            str += colorTag;
+            for (i = bitsShown; i < bitsToShow; i++) {
+                str += textBits[i];
+            }
+            str += "</color>";
+        }
+        textMesh.text = str;
+    }
 }
