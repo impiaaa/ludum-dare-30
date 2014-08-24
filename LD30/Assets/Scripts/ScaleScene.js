@@ -5,6 +5,7 @@ var cameraObject:GameObject;
 var enableEarly:GameObject;
 var illustration:GameObject;
 var bookMaterial:Material;
+var bookAnimator:Animator;
 
 private var cameraController:MonoBehaviour;
 private var hasDisabled:boolean;
@@ -72,6 +73,7 @@ function Update () {
             StartAnimation(EXPANDING);
             enableChildObjects(true);
             enableEarly.GetComponents.<MonoBehaviour>()[1].enabled = true;
+            bookAnimator.SetTrigger(bookAnimator.StringToHash("Turn next page"));
         }
     }
     var clock = (Time.time-startingTime)*speed;
