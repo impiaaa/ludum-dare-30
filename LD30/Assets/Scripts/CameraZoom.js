@@ -19,9 +19,6 @@ function StartAnimation() {
 }
 
 function Update () {
-    if (Input.GetAxis("Fire2")) {
-        StartAnimation();
-    }
     if (isRunning) {
         var clock = (Time.time-startingTime)*speed;
         transform.position = Vector3.Lerp(startingPosition, targetTransform.position, clock);
