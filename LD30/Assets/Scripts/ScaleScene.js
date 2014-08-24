@@ -3,11 +3,17 @@
 var speed:float;
 var cameraObject:GameObject;
 var enableEarly:GameObject;
+var bookMaterial:Material;
+
 private var cameraController:MonoBehaviour;
 private var hasDisabled:boolean;
 private var startingTime:float;
+private var oldMaterials:Material[];
+
 private var rigidbodies:Rigidbody[];
 private var behaviors:Behaviour[];
+private var renderers:Renderer[];
+
 private var runningState:int;
 private var EXPANDED:int = 0;
 private var EXPANDING:int = 1;
@@ -17,6 +23,8 @@ private var CONTRACTING:int = 3;
 function Start () {
     rigidbodies = GetComponentsInChildren.<Rigidbody>();
     behaviors = GetComponentsInChildren.<Behaviour>();
+    renderers = GetComponentsInChildren.<Renderer>();
+    oldMaterials = new Material[renderers.length];
     runningState = EXPANDED;
     cameraController = cameraObject.GetComponent.<MonoBehaviour>();
 }
@@ -45,10 +53,20 @@ private function enableChildObjects(enable : boolean) {
 }
 
 function Update () {
+    var renderer:Renderer;
+    var i:int;
     if (Input.GetAxis("Fire3")) {
         if (runningState == EXPANDED) {
             StartAnimation(CONTRACTING);
             cameraController.Invoke("StartAnimation", 0.0);
+            
+            for (i = 0; i < renderers.length; i++) {
+                renderer = renderers[i];
+                oldMaterials[i] = renderer.material;
+                var oldTex:Texture = renderer.material.mainTexture;
+                renderer.material = bookMaterial;
+                renderer.material.SetTexture("_MainTex", oldTex);
+            }
         }
         else if (runningState == CONTRACTED) {
             StartAnimation(EXPANDING);
@@ -59,10 +77,20 @@ function Update () {
     var clock = (Time.time-startingTime)*speed;
     if (runningState == EXPANDING) {
         transform.localScale.y = clock;
+        
+        for (renderer in renderers) {
+            renderer.material.SetFloat("_Blend", 1-clock);
+        }
+        
         if (clock >= 1.0) {
             runningState = EXPANDED;
             enableChildComponents(true);
             hasDisabled = false;
+            
+            for (i = 0; i < renderers.length; i++) {
+                renderer = renderers[i];
+                renderer.material = oldMaterials[i];
+            }
         }
     }
     else if (runningState == CONTRACTING) {
@@ -70,7 +98,13 @@ function Update () {
             enableChildComponents(false);
             hasDisabled = true;
         }
+        
+        for (renderer in renderers) {
+            renderer.material.SetFloat("_Blend", clock);
+        }
+        
         transform.localScale.y = 1-clock;
+        
         if (clock >= 1.0) {
             enableChildObjects(false);
             runningState = CONTRACTED;
