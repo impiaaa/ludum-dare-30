@@ -1,7 +1,6 @@
 ﻿#pragma strict
 
 var speed:float;
-var cameraObject:GameObject;
 var enableEarly:GameObject;
 var illustration:GameObject;
 var bookMaterial:Material;
@@ -29,7 +28,7 @@ function Start () {
     behaviors = GetComponentsInChildren.<Behaviour>();
     renderers = GetComponentsInChildren.<Renderer>();
     oldMaterials = new Material[renderers.length];
-    cameraController = cameraObject.GetComponent.<MonoBehaviour>();
+    cameraController = Camera.main.GetComponent.<MonoBehaviour>();
     runningState = EXPANDED;
     tempDontAnimateCamera = true;
     StartAnimation(CONTRACTING);

@@ -1,6 +1,7 @@
 ﻿#pragma strict
 
 public var bookAnimator:Animator;
+public var deskLamp:GameObject;
 
 private var gameWorld:GameObject;
 private var inventory = new Array();
@@ -42,14 +43,18 @@ function StartLoadLevel(nextLevel:String) {
     gameWorld.SendMessage("StartAnimation", 3);
 }
 
-function OnLevelWasLoaded (level : int) {
+function LevelLoaded() {
     gameWorld = GameObject.FindGameObjectWithTag("Game World");
+    gameWorld.GetComponent.<ScaleScene>().deskLamp = deskLamp;
     loadAtEndOfAnimation = null;
 }
 
+function OnLevelWasLoaded (level : int) {
+    LevelLoaded();
+}
+
 function Awake() {
-    gameWorld = GameObject.FindGameObjectWithTag("Game World");
-    loadAtEndOfAnimation = null;
+    LevelLoaded();
 }
 
 function Start() {
