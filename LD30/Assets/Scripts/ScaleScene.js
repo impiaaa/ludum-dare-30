@@ -5,6 +5,8 @@ var cameraObject:GameObject;
 var enableEarly:GameObject;
 var illustration:GameObject;
 var bookMaterial:Material;
+var gameWorldLight:GameObject;
+var deskLamp:GameObject;
 
 private var cameraController:MonoBehaviour;
 private var hasDisabled:boolean;
@@ -84,6 +86,9 @@ function Update () {
         
         illustration.renderer.material.color.a = 1-clock;
         
+        gameWorldLight.light.intensity = clock*0.5;
+        deskLamp.light.intensity = 1.5-(clock*1.5);
+        
         if (clock >= 1.0) {
             runningState = EXPANDED;
             enableChildComponents(true);
@@ -108,6 +113,9 @@ function Update () {
         transform.localScale.y = 1-clock;
         
         illustration.renderer.material.color.a = clock;
+        
+        gameWorldLight.light.intensity = 0.5-(clock*0.5);
+        deskLamp.light.intensity = clock*1.5;
         
         if (clock >= 1.0) {
             enableChildObjects(false);
