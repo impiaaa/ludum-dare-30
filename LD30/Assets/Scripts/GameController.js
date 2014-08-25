@@ -1,9 +1,9 @@
 ﻿#pragma strict
 
-function Start () {
+private var Inventory:String[];
 
+function Start () {
 }
 
 function Update () {
-
 }

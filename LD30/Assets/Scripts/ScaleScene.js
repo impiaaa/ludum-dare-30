@@ -9,9 +9,9 @@ var gameWorldLight:GameObject;
 var deskLamp:GameObject;
 
 private var cameraController:MonoBehaviour;
-private var hasDisabled:boolean;
 private var startingTime:float;
 private var oldMaterials:Material[];
+private var tempDontAnimateCamera:boolean;
 
 private var rigidbodies:Rigidbody[];
 private var behaviors:Behaviour[];
@@ -28,13 +28,49 @@ function Start () {
     behaviors = GetComponentsInChildren.<Behaviour>();
     renderers = GetComponentsInChildren.<Renderer>();
     oldMaterials = new Material[renderers.length];
-    runningState = EXPANDED;
     cameraController = cameraObject.GetComponent.<MonoBehaviour>();
+    runningState = EXPANDED;
+    tempDontAnimateCamera = true;
+    StartAnimation(CONTRACTING);
+    setAnimationValues(0.0);
+    StartAnimation(CONTRACTED);
+    tempDontAnimateCamera = false;
 }
 
 function StartAnimation(state:int) {
+    var i:int;
+    var renderer:Renderer;
     startingTime = Time.time;
     runningState = state;
+    if (state == CONTRACTING) {
+        enableChildComponents(false);
+        
+        if (!tempDontAnimateCamera)
+            cameraController.Invoke("StartAnimation", 0.0);
+        
+        for (i = 0; i < renderers.length; i++) {
+            renderer = renderers[i];
+            oldMaterials[i] = renderer.material;
+            var oldTex:Texture = renderer.material.mainTexture;
+            renderer.material = bookMaterial;
+            renderer.material.SetTexture("_MainTex", oldTex);
+        }
+    }
+    else if (state == EXPANDING) {
+        enableChildObjects(true);
+        enableEarly.GetComponents.<MonoBehaviour>()[1].enabled = true;
+    }
+    else if (state == CONTRACTED) {
+        enableChildObjects(false);
+    }
+    else if (state == EXPANDED) {
+        enableChildComponents(true);
+        
+        for (i = 0; i < renderers.length; i++) {
+            renderer = renderers[i];
+            renderer.material = oldMaterials[i];
+        }
+    }
 }
 
 private function enableChildComponents(enable : boolean) {
@@ -54,72 +90,41 @@ private function enableChildObjects(enable : boolean) {
     } 
 }
 
+private function setAnimationValues(clock:float) {
+    transform.localScale.y = clock;
+    
+    for (renderer in renderers) {
+        renderer.material.SetFloat("_Blend", 1-clock);
+    }
+    
+    illustration.renderer.material.color.a = 1-clock;
+    
+    gameWorldLight.light.intensity = clock*0.5;
+    deskLamp.light.intensity = 1.5-(clock*1.5);
+}
+
 function Update () {
     var renderer:Renderer;
     var i:int;
     if (Input.GetAxis("Fire3")) {
         if (runningState == EXPANDED) {
             StartAnimation(CONTRACTING);
-            cameraController.Invoke("StartAnimation", 0.0);
-            
-            for (i = 0; i < renderers.length; i++) {
-                renderer = renderers[i];
-                oldMaterials[i] = renderer.material;
-                var oldTex:Texture = renderer.material.mainTexture;
-                renderer.material = bookMaterial;
-                renderer.material.SetTexture("_MainTex", oldTex);
-            }
         }
         else if (runningState == CONTRACTED) {
             StartAnimation(EXPANDING);
-            enableChildObjects(true);
-            enableEarly.GetComponents.<MonoBehaviour>()[1].enabled = true;
         }
     }
-    var clock = (Time.time-startingTime)*speed;
+    var clock:float = (Time.time-startingTime)*speed;
     if (runningState == EXPANDING) {
-        transform.localScale.y = clock;
-        
-        for (renderer in renderers) {
-            renderer.material.SetFloat("_Blend", 1-clock);
-        }
-        
-        illustration.renderer.material.color.a = 1-clock;
-        
-        gameWorldLight.light.intensity = clock*0.5;
-        deskLamp.light.intensity = 1.5-(clock*1.5);
-        
+        setAnimationValues(clock);
         if (clock >= 1.0) {
-            runningState = EXPANDED;
-            enableChildComponents(true);
-            hasDisabled = false;
-            
-            for (i = 0; i < renderers.length; i++) {
-                renderer = renderers[i];
-                renderer.material = oldMaterials[i];
-            }
+            StartAnimation(EXPANDED);
         }
     }
     else if (runningState == CONTRACTING) {
-        if (!hasDisabled) {
-            enableChildComponents(false);
-            hasDisabled = true;
-        }
-        
-        for (renderer in renderers) {
-            renderer.material.SetFloat("_Blend", clock);
-        }
-        
-        transform.localScale.y = 1-clock;
-        
-        illustration.renderer.material.color.a = clock;
-        
-        gameWorldLight.light.intensity = 0.5-(clock*0.5);
-        deskLamp.light.intensity = clock*1.5;
-        
+        setAnimationValues(1-clock);
         if (clock >= 1.0) {
-            enableChildObjects(false);
-            runningState = CONTRACTED;
+            StartAnimation(CONTRACTED);
         }
     }
 }
