@@ -121,6 +121,10 @@ private function setAnimationValues(clock:float) {
     
     illustration.renderer.material.color.a = 1-clock;
     
+    for (var ill:GameObject in GameObject.FindGameObjectsWithTag("Illustration")) {
+        ill.renderer.material.color.a = 1-clock;
+    }
+    
     gameWorldLight.light.intensity = clock*0.5;
     deskLamp.light.intensity = 1.0-(clock*1.0);
 }
