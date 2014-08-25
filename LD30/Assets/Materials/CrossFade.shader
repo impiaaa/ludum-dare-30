@@ -4,7 +4,8 @@
   {
     _Blend ( "Blend", Range ( 0, 1 ) ) = 0.5
     _MainTex ( "Texture 1", 2D ) = "white" {}
-    _Texture2 ( "Texture 2", 2D ) = ""
+    _Texture2 ( "Texture 2", 2D ) = "" {}
+    _Ambient ( "Ambient color", Color ) = (1.0, 1.0, 1.0, 1.0)
   }
   SubShader
   {
@@ -33,10 +34,12 @@
       float2 uv_Texture2;
     };
     
+    fixed4 _Ambient;
+    
     void mycolor(Input IN, SurfaceOutput o, inout fixed4 color)
     {
       fixed4 t2  = tex2D ( _Texture2, IN.uv_Texture2 );
-      color = lerp(color, t2, _Blend);
+      color = lerp(color, t2*_Ambient, _Blend);
     }
     
     void surf ( Input IN, inout SurfaceOutput o )
