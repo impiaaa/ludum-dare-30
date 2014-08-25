@@ -54,7 +54,7 @@ function OnLevelWasLoaded (level : int) {
 }
 
 function Awake() {
-    LevelLoaded();
+    
 }
 
 function Start() {
@@ -71,6 +71,8 @@ function Start() {
     for (var o in stickArounds) {
         DontDestroyOnLoad(o);
     }
+    
+    Application.LoadLevel("Level1");
 }
 
 function Update() {
