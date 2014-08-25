@@ -2,9 +2,9 @@
 
 public var bookAnimator:Animator;
 public var deskLamp:GameObject;
+public var inventory:Array = new Array();
 
 private var gameWorld:GameObject;
-private var inventory = new Array();
 private var stickArounds:GameObject[];
 private var loadAtEndOfAnimation:String;
 
@@ -80,5 +80,13 @@ function Update() {
         bookAnimator.SetTrigger("Reset");
         Application.LoadLevel(loadAtEndOfAnimation);
         loadAtEndOfAnimation = null;
+    }
+}
+
+function OnGUI() {
+    var i:int;
+    GUI.Box(new Rect(10,10,100,30*inventory.length+30), "Inventory");
+    for (i = 0; i < inventory.length; i++) {
+        GUI.Label(new Rect(20,30*i+20,80,20), inventory[i].ToString());
     }
 }
