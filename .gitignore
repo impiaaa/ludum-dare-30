@@ -13,7 +13,7 @@
 /*.booproj
 
 # Blender
-/*.blend1
-/*.blend2
-/*.blend1.meta
-/*.blend2.meta
+*.blend1
+*.blend2
+*.blend1.meta
+*.blend2.meta
