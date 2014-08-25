@@ -1,7 +1,6 @@
 ﻿#pragma strict
 
 var speed:float;
-var cameraObject:GameObject;
 var enableEarly:GameObject;
 var illustration:GameObject;
 var bookMaterial:Material;
@@ -11,7 +10,8 @@ var deskLamp:GameObject;
 private var cameraController:MonoBehaviour;
 private var startingTime:float;
 private var oldMaterials:Material[];
-private var tempDontAnimateCamera:boolean;
+private var tempDontAnimateCamera:boolean = false;
+private var animCallback:Function;
 
 private var rigidbodies:Rigidbody[];
 private var behaviors:Behaviour[];
@@ -28,13 +28,17 @@ function Start () {
     behaviors = GetComponentsInChildren.<Behaviour>();
     renderers = GetComponentsInChildren.<Renderer>();
     oldMaterials = new Material[renderers.length];
-    cameraController = cameraObject.GetComponent.<MonoBehaviour>();
+    cameraController = Camera.main.GetComponent.<MonoBehaviour>();
     runningState = EXPANDED;
     tempDontAnimateCamera = true;
     StartAnimation(CONTRACTING);
     setAnimationValues(0.0);
     StartAnimation(CONTRACTED);
     tempDontAnimateCamera = false;
+}
+
+function SetCallback(callback:Function) {
+    animCallback = callback;
 }
 
 function StartAnimation(state:int) {
@@ -85,8 +89,8 @@ private function enableChildComponents(enable : boolean) {
 }
 
 private function enableChildObjects(enable : boolean) {
-    for (var child : Transform in transform) {
-        child.gameObject.SetActive(enable);
+    for (var child : Object in transform) {
+        (child as Transform).gameObject.SetActive(enable);
     } 
 }
 
@@ -100,13 +104,13 @@ private function setAnimationValues(clock:float) {
     illustration.renderer.material.color.a = 1-clock;
     
     gameWorldLight.light.intensity = clock*0.5;
-    deskLamp.light.intensity = 1.5-(clock*1.5);
+    deskLamp.light.intensity = 1.0-(clock*1.0);
 }
 
 function Update () {
     var renderer:Renderer;
     var i:int;
-    if (Input.GetAxis("Fire3")) {
+    if (Input.GetAxis("Fire1")) {
         if (runningState == EXPANDED) {
             StartAnimation(CONTRACTING);
         }
@@ -118,12 +122,20 @@ function Update () {
     if (runningState == EXPANDING) {
         setAnimationValues(clock);
         if (clock >= 1.0) {
+            if (animCallback) {
+                animCallback();
+                animCallback = null;
+            }
             StartAnimation(EXPANDED);
         }
     }
     else if (runningState == CONTRACTING) {
         setAnimationValues(1-clock);
         if (clock >= 1.0) {
+            if (animCallback) {
+                animCallback();
+                animCallback = null;
+            }
             StartAnimation(CONTRACTED);
         }
     }
