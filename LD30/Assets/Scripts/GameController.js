@@ -4,6 +4,7 @@ import System.Runtime.Serialization.Formatters.Binary;
 import System.IO;
 
 public var bookAnimator:Animator;
+public var bookAudio:AudioSource;
 public var deskLamp:GameObject;
 public var inventory:Array = new Array();
 
@@ -59,6 +60,7 @@ function StartLoadLevel(nextLevel:String, next:boolean) {
         else {
             bookAnimator.SetTrigger("Turn previous page");
         }
+        bookAudio.Play();
     });
     gameWorld.SendMessage("StartAnimation", 3);
 }
