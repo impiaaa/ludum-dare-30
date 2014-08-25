@@ -1,5 +1,8 @@
 ﻿#pragma strict
 
+import System.Runtime.Serialization.Formatters.Binary;
+import System.IO;
+
 public var bookAnimator:Animator;
 public var deskLamp:GameObject;
 public var inventory:Array = new Array();
@@ -7,9 +10,10 @@ public var inventory:Array = new Array();
 private var gameWorld:GameObject;
 private var stickArounds:GameObject[];
 private var loadAtEndOfAnimation:String;
+private var savedState:Hashtable = new Hashtable();
 
 function HasItem(search:String):boolean {
-    for (var item:String in inventory) {
+    for (var item:String in inventory.ToBuiltin(String) as String[]) {
         if (search.Equals(item)) {
             return true;
         }
@@ -32,13 +36,18 @@ function PushItem(newItem:String) {
     inventory.Push(newItem);
 }
 
-function StartLoadLevel(nextLevel:String) {
+function StartLoadLevel(nextLevel:String, next:boolean) {
     gameWorld.SendMessage("SetCallback", function() {
         for (var o:GameObject in GameObject.FindGameObjectsWithTag("Unload Early")) {
             Destroy(o);
         }
         loadAtEndOfAnimation = nextLevel;
-        bookAnimator.SetTrigger("Turn next page");
+        if (next) {
+            bookAnimator.SetTrigger("Turn next page");
+        }
+        else {
+            bookAnimator.SetTrigger("Turn previous page");
+        }
     });
     gameWorld.SendMessage("StartAnimation", 3);
 }
@@ -54,7 +63,7 @@ function OnLevelWasLoaded (level : int) {
 }
 
 function Awake() {
-    
+    Load();
 }
 
 function Start() {
@@ -88,5 +97,38 @@ function OnGUI() {
     GUI.Box(new Rect(10,10,100,30*inventory.length+30), "Inventory");
     for (i = 0; i < inventory.length; i++) {
         GUI.Label(new Rect(20,30*i+20,80,20), inventory[i].ToString());
+    }
+}
+
+function SaveState(key:String, value:Object) {
+    savedState[key] = value;
+}
+
+function LoadState(key:String, defaultValue:Object) {
+    if (savedState.ContainsKey(key)) {
+        return savedState[key];
+    }
+    else {
+        return defaultValue;
+    }
+}
+
+function OnApplicationQuit() {
+    Save();
+}
+
+function Save() {
+    var bf:BinaryFormatter = new BinaryFormatter();
+    var file:FileStream = File.Create(Application.persistentDataPath + "/playerInfo.dat", FileMode.Create);
+    bf.Serialize(file, savedState);
+    file.Close();
+}
+
+function Load() {
+    if (File.Exists(Application.persistentDataPath + "/playerInfo.dat")) {
+        var bf:BinaryFormatter = new BinaryFormatter();
+        var file:FileStream = File.Open(Application.persistentDataPath + "/playerInfo.dat", FileMode.Open);
+        savedState = bf.Deserialize(file) as Hashtable;
+        file.Close();
     }
 }

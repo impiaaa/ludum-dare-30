@@ -89,8 +89,8 @@ private function enableChildComponents(enable : boolean) {
 }
 
 private function enableChildObjects(enable : boolean) {
-    for (var child : Transform in transform) {
-        child.gameObject.SetActive(enable);
+    for (var child : Object in transform) {
+        (child as Transform).gameObject.SetActive(enable);
     } 
 }
 
@@ -104,13 +104,13 @@ private function setAnimationValues(clock:float) {
     illustration.renderer.material.color.a = 1-clock;
     
     gameWorldLight.light.intensity = clock*0.5;
-    deskLamp.light.intensity = 1.5-(clock*1.5);
+    deskLamp.light.intensity = 1.0-(clock*1.0);
 }
 
 function Update () {
     var renderer:Renderer;
     var i:int;
-    if (Input.GetAxis("Fire3")) {
+    if (Input.GetAxis("Fire1")) {
         if (runningState == EXPANDED) {
             StartAnimation(CONTRACTING);
         }
