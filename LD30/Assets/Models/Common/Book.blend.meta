@@ -30,7 +30,7 @@ ModelImporter:
     4300000: Plane_001
     4300002: Plane
     4300004: BookMesh
-    7400000: Default Take
+    7400000: TurnPrevious
     7400002: ArmatureAction_001
     7400004: TurnNext
     9500000: //RootNode
@@ -51,7 +51,91 @@ ModelImporter:
     animationScaleError: .5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: TurnNext
+      takeName: TurnNext
+      firstFrame: 0
+      lastFrame: 50
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: BookArmature
+        weight: 1
+      - path: BookArmature/Root
+        weight: 1
+      - path: BookArmature/Root/Bone
+        weight: 1
+      - path: BookArmature/Root/Bone/Bone_001
+        weight: 1
+      - path: BookArmature/Root/Bone/Bone_001/Bone_002
+        weight: 1
+      - path: BookArmature/Root/Bone/Bone_001/Bone_002/Bone_003
+        weight: 1
+      - path: BookMesh
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: TurnPrevious
+      takeName: Default Take
+      firstFrame: 60
+      lastFrame: 110
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: BookArmature
+        weight: 1
+      - path: BookArmature/Root
+        weight: 1
+      - path: BookArmature/Root/Bone
+        weight: 1
+      - path: BookArmature/Root/Bone/Bone_001
+        weight: 1
+      - path: BookArmature/Root/Bone/Bone_001/Bone_002
+        weight: 1
+      - path: BookArmature/Root/Bone/Bone_001/Bone_002/Bone_003
+        weight: 1
+      - path: BookMesh
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
     isReadable: 1
   meshes:
     lODScreenPercentages: []
