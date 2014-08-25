@@ -11,6 +11,9 @@ ModelImporter:
     100010: //RootNode
     100012: Plane
     100014: Plane_001
+    100016: BookArmature
+    100018: BookMesh
+    100020: Root
     400000: Armature
     400002: Bone
     400004: Bone_001
@@ -19,14 +22,20 @@ ModelImporter:
     400010: //RootNode
     400012: Plane
     400014: Plane_001
+    400016: BookArmature
+    400018: BookMesh
+    400020: Root
     2300000: Plane
     3300000: Plane
     4300000: Plane_001
     4300002: Plane
+    4300004: BookMesh
     7400000: Default Take
     7400002: ArmatureAction_001
+    7400004: TurnNext
     9500000: //RootNode
     13700000: Plane_001
+    13700002: BookMesh
   materials:
     importMaterials: 1
     materialName: 0
@@ -60,7 +69,7 @@ ModelImporter:
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
   tangentSpace:
-    normalSmoothAngle: 30
+    normalSmoothAngle: 60
     splitTangentsAcrossUV: 1
     normalImportMode: 1
     tangentImportMode: 1
