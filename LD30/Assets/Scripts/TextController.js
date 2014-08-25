@@ -11,6 +11,13 @@ private var callback:Function;
 
 function Start () {
     textMesh = GetComponent.<TextMesh>();
+    var str:String = "";
+    var i:int;
+    for (i = 0; i < bitsShown; i++) {
+        str += textBits[i];
+    }
+    bitsToShow = bitsShown;
+    textMesh.text = str;
 }
 
 function SetCallback(f:Function) {
