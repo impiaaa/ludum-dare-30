@@ -7,17 +7,26 @@ var speed:float;
 private var textMesh:TextMesh;
 private var startingTime:float;
 private var bitsToShow:int;
+private var callback:Function;
 
 function Start () {
     textMesh = GetComponent.<TextMesh>();
 }
 
+function SetCallback(f:Function) {
+    callback = f;
+}
+
 function ShowNextBit() {
-    if (bitsShown >= textBits.length) {
+    ShowBits(bitsShown+1);
+}
+
+function ShowBits(bit:int) {
+    if (bit >= textBits.length || bit <= bitsShown) {
         return;
     }
     startingTime = Time.time;
-    bitsToShow = bitsShown+1;
+    bitsToShow = bit;
 }
 
 function Update () {
@@ -43,5 +52,9 @@ function Update () {
             str += "</color>";
         }
         textMesh.text = str;
+        if (clock >= 1 && callback != null) {
+            callback();
+            callback = null;
+        }
     }
 }

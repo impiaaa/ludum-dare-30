@@ -122,21 +122,21 @@ function Update () {
     if (runningState == EXPANDING) {
         setAnimationValues(clock);
         if (clock >= 1.0) {
+            StartAnimation(EXPANDED);
             if (animCallback) {
                 animCallback();
                 animCallback = null;
             }
-            StartAnimation(EXPANDED);
         }
     }
     else if (runningState == CONTRACTING) {
         setAnimationValues(1-clock);
         if (clock >= 1.0) {
+            StartAnimation(CONTRACTED);
             if (animCallback) {
                 animCallback();
                 animCallback = null;
             }
-            StartAnimation(CONTRACTED);
         }
     }
 }

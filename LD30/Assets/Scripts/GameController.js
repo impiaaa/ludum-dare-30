@@ -11,6 +11,7 @@ private var gameWorld:GameObject;
 private var stickArounds:GameObject[];
 private var loadAtEndOfAnimation:String;
 private var savedState:Hashtable = new Hashtable();
+private var textController:TextController;
 
 function HasItem(search:String):boolean {
     for (var item:String in inventory.ToBuiltin(String) as String[]) {
@@ -36,6 +37,16 @@ function PushItem(newItem:String) {
     inventory.Push(newItem);
 }
 
+function ZoomOutToShowBits(showTextBit:int) {
+    gameWorld.SendMessage("SetCallback", function() {
+        textController.SetCallback(function() {
+            gameWorld.SendMessage("StartAnimation", 1);
+        });
+        textController.ShowBits(showTextBit);
+    });
+    gameWorld.SendMessage("StartAnimation", 3);
+}
+
 function StartLoadLevel(nextLevel:String, next:boolean) {
     gameWorld.SendMessage("SetCallback", function() {
         for (var o:GameObject in GameObject.FindGameObjectsWithTag("Unload Early")) {
@@ -56,6 +67,7 @@ function LevelLoaded() {
     gameWorld = GameObject.FindGameObjectWithTag("Game World");
     gameWorld.GetComponent.<ScaleScene>().deskLamp = deskLamp;
     loadAtEndOfAnimation = null;
+    textController = FindObjectOfType(TextController) as TextController;
 }
 
 function OnLevelWasLoaded (level : int) {
@@ -120,15 +132,22 @@ function OnApplicationQuit() {
 function Save() {
     var bf:BinaryFormatter = new BinaryFormatter();
     var file:FileStream = File.Create(Application.persistentDataPath + "/playerInfo.dat", FileMode.Create);
+    savedState["_Inventory"] = inventory;
     bf.Serialize(file, savedState);
     file.Close();
 }
 
 function Load() {
-    if (File.Exists(Application.persistentDataPath + "/playerInfo.dat")) {
+    if (0 && File.Exists(Application.persistentDataPath + "/playerInfo.dat")) {
         var bf:BinaryFormatter = new BinaryFormatter();
         var file:FileStream = File.Open(Application.persistentDataPath + "/playerInfo.dat", FileMode.Open);
         savedState = bf.Deserialize(file) as Hashtable;
+        if (savedState.ContainsKey("_Inventory")) {
+            inventory = savedState["_Inventory"] as Array;
+        }
+        if (inventory == null) {
+            inventory = new Array();
+        }
         file.Close();
     }
 }
