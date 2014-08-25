@@ -7,6 +7,7 @@ public var bookAnimator:Animator;
 public var bookAudio:AudioSource;
 public var deskLamp:GameObject;
 public var inventory:Array = new Array();
+public var loadLevel:String = "Level1";
 
 private var gameWorld:GameObject;
 private var stickArounds:GameObject[];
@@ -94,11 +95,14 @@ function Start() {
     for (var o in stickArounds) {
         DontDestroyOnLoad(o);
     }
-    
-    Application.LoadLevel("Level1");
 }
 
 function Update() {
+    if (Application.loadedLevelName.Equals("BaseScene") && loadLevel != null) {
+        Application.LoadLevel(loadLevel);
+        Debug.Log("GameController loading level "+loadLevel);
+        loadLevel = null;
+    }
     if (bookAnimator.GetCurrentAnimatorStateInfo(0).IsName("Page turned")) {
         bookAnimator.SetTrigger("Reset");
         Application.LoadLevel(loadAtEndOfAnimation);
