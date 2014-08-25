@@ -15,13 +15,13 @@ function Start () {
 }
 
 function Trigger() {
-    gameController.ZoomOutToShowBits(showTextBit);
     for (var o:GameObject in enableObjects) {
         o.SetActive(true);
     }
     for (var o:GameObject in disableObjects) {
         o.SetActive(false);
     }
+    gameController.ZoomOutToShowBits(showTextBit);
 }
 
 function OnTriggerEnter() {
