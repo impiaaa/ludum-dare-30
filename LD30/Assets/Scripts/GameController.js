@@ -157,3 +157,8 @@ function Load() {
         file.Close();
     }
 }
+
+function ClearState() {
+    inventory = new Array();
+    savedState = new Hashtable();
+}

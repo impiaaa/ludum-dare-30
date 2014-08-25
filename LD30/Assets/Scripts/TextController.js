@@ -1,8 +1,9 @@
 ﻿#pragma strict
 
 var textBits:String[];
-var bitsShown:int;
-var speed:float;
+var bitsShown:int = 1;
+var speed:float = 1.0;
+var exitOnFinish:boolean = false;
 
 private var textMesh:TextMesh;
 private var startingTime:float;
@@ -29,7 +30,7 @@ function ShowNextBit() {
 }
 
 function ShowBits(bit:int) {
-    if (bit >= textBits.length || bit <= bitsShown) {
+    if (bit > textBits.length || bit <= bitsShown) {
         return;
     }
     startingTime = Time.time;
@@ -59,9 +60,20 @@ function Update () {
             str += "</color>";
         }
         textMesh.text = str;
-        if (clock >= 1 && callback != null) {
-            callback();
-            callback = null;
+        if (clock >= 1) {
+            if (callback != null) {
+                callback();
+                callback = null;
+            }
+            if (exitOnFinish && bitsShown == textBits.length) {
+                var gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent.<GameController>();
+                gameController.ClearState();
+                if (Application.isWebPlayer || Application.platform == RuntimePlatform.IPhonePlayer || Application.isEditor) {
+                }
+                else {
+                    Application.Quit();
+                }
+            }
         }
     }
 }
