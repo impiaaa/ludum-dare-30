@@ -12,6 +12,8 @@ private var startingTime:float;
 private var oldMaterials:Material[];
 private var tempDontAnimateCamera:boolean = false;
 private var animCallback:Function;
+private var savedObjectEnables:Hashtable = new Hashtable();
+private var savedComponentEnables:Hashtable = new Hashtable();
 
 private var rigidbodies:Rigidbody[];
 private var behaviors:Behaviour[];
@@ -23,13 +25,27 @@ private var EXPANDING:int = 1;
 private var CONTRACTED:int = 2;
 private var CONTRACTING:int = 3;
 
+function backupEnableState() {
+    for (var child : Object in transform) {
+        var object:GameObject = (child as Transform).gameObject;
+        savedObjectEnables[object.GetInstanceID()] = object.activeSelf;
+    }
+    for (var body : Rigidbody in rigidbodies) {
+        savedComponentEnables[body.GetInstanceID()] = !body.isKinematic;
+    }
+    for (var component : Behaviour in behaviors) {
+        savedComponentEnables[component.GetInstanceID()] = component.enabled;
+    }
+    renderers = GetComponentsInChildren.<Renderer>();
+    oldMaterials = new Material[renderers.length];
+}
+
 function Start () {
     rigidbodies = GetComponentsInChildren.<Rigidbody>();
     behaviors = GetComponentsInChildren.<Behaviour>();
-    renderers = GetComponentsInChildren.<Renderer>();
-    oldMaterials = new Material[renderers.length];
     cameraController = Camera.main.GetComponent.<MonoBehaviour>();
     runningState = EXPANDED;
+    
     tempDontAnimateCamera = true;
     StartAnimation(CONTRACTING);
     setAnimationValues(0.0);
@@ -47,6 +63,7 @@ function StartAnimation(state:int) {
     startingTime = Time.time;
     runningState = state;
     if (state == CONTRACTING) {
+        backupEnableState();
         enableChildComponents(false);
         
         if (!tempDontAnimateCamera)
@@ -79,18 +96,19 @@ function StartAnimation(state:int) {
 
 private function enableChildComponents(enable : boolean) {
     for (var body : Rigidbody in rigidbodies) {
-        body.isKinematic = !enable;
+        body.isKinematic = !(enable && savedComponentEnables[body.GetInstanceID()]);
     }
     for (var component : Behaviour in behaviors) {
         if (component !== this) {
-            component.enabled = enable;
+            component.enabled = enable && savedComponentEnables[component.GetInstanceID()];
         }
     }
 }
 
 private function enableChildObjects(enable : boolean) {
     for (var child : Object in transform) {
-        (child as Transform).gameObject.SetActive(enable);
+        var object:GameObject = (child as Transform).gameObject;
+        object.SetActive(enable && savedObjectEnables[object.GetInstanceID()]);
     } 
 }
 
