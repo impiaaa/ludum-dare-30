@@ -3,5 +3,5 @@
 var nextLevel:String;
 
 function OnTriggerEnter() {
-    Application.LoadLevel(nextLevel);
+    GameObject.FindWithTag("GameController").SendMessage("StartLoadLevel", nextLevel);
 }

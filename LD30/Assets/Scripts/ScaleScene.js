@@ -11,7 +11,8 @@ var deskLamp:GameObject;
 private var cameraController:MonoBehaviour;
 private var startingTime:float;
 private var oldMaterials:Material[];
-private var tempDontAnimateCamera:boolean;
+private var tempDontAnimateCamera:boolean = false;
+private var animCallback:Function;
 
 private var rigidbodies:Rigidbody[];
 private var behaviors:Behaviour[];
@@ -35,6 +36,10 @@ function Start () {
     setAnimationValues(0.0);
     StartAnimation(CONTRACTED);
     tempDontAnimateCamera = false;
+}
+
+function SetCallback(callback:Function) {
+    animCallback = callback;
 }
 
 function StartAnimation(state:int) {
@@ -118,12 +123,20 @@ function Update () {
     if (runningState == EXPANDING) {
         setAnimationValues(clock);
         if (clock >= 1.0) {
+            if (animCallback) {
+                animCallback();
+                animCallback = null;
+            }
             StartAnimation(EXPANDED);
         }
     }
     else if (runningState == CONTRACTING) {
         setAnimationValues(1-clock);
         if (clock >= 1.0) {
+            if (animCallback) {
+                animCallback();
+                animCallback = null;
+            }
             StartAnimation(CONTRACTED);
         }
     }
