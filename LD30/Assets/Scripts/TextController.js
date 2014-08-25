@@ -61,10 +61,6 @@ function Update () {
         }
         textMesh.text = str;
         if (clock >= 1) {
-            if (callback != null) {
-                callback();
-                callback = null;
-            }
             if (exitOnFinish && bitsShown == textBits.length) {
                 var gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent.<GameController>();
                 gameController.ClearState();
@@ -73,6 +69,10 @@ function Update () {
                 else {
                     Application.Quit();
                 }
+            }
+            else if (callback != null) {
+                callback();
+                callback = null;
             }
         }
     }
