@@ -5,28 +5,45 @@ var disableObjects:GameObject[];
 var requiredInventoryItem:String;
 var showTextBit:int;
 
+private var showMessage:boolean = false;
+private var hasActivated:boolean = false;
 private var gameController:GameController;
 
 function Start () {
     gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent.<GameController>();
-    if (gameController.LoadState(gameObject.GetInstanceID()+"Triggered", false)) {
-        Trigger();
+    hasActivated = gameController.LoadState(requiredInventoryItem+"Triggered", false);
+    if (hasActivated) {
+        SetActiveObjects();
     }
 }
 
-function Trigger() {
+function SetActiveObjects() {
     for (var o:GameObject in enableObjects) {
         o.SetActive(true);
     }
     for (var o:GameObject in disableObjects) {
         o.SetActive(false);
     }
-    gameController.ZoomOutToShowBits(showTextBit);
 }
 
 function OnTriggerEnter() {
     if (gameController.PopItem(requiredInventoryItem)) {
-        gameController.SaveState(gameObject.GetInstanceID()+"Triggered", true);
-        Trigger();
+        gameController.SaveState(requiredInventoryItem+"Triggered", true);
+        hasActivated = true;
+        SetActiveObjects();
+        gameController.ZoomOutToShowBits(showTextBit);
+    }
+    else {
+        showMessage = true;
+    }
+}
+
+function OnTriggerExit() {
+    showMessage = false;
+}
+
+function OnGUI() {
+    if (showMessage && !hasActivated) {
+        GUI.Box(new Rect(Screen.width/2, Screen.height/2, 100, 50), "Need a "+requiredInventoryItem);
     }
 }
